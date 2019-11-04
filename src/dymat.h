@@ -2,7 +2,7 @@
 #define _DYMAT_H
 
 #include<stdlib.h>
- 
+
 // dynamic memory allocation tracker object
 typedef struct dymat_obj* dymat;
 
