@@ -1,5 +1,9 @@
 #include "dymat.h"
 
+#include <stdlib.h>     // srand
+
+
+#define TABLE_SIZE 499  // prime number
 //===========================================================//
 // Structs
 //===========================================================//
@@ -29,13 +33,15 @@ typedef struct node_obj
 // define "node" as a pointer to node_obj
 typedef struct node_obj* node;
 
-/** Struct: node_obj
+/** Struct: dymat_obj
  *  Fields: 
- *      node* pointerlist_head  - head of the linked list stack ADT
+ *      node* table                 - array of linked lists for hash table
+ *  Extra Description: To add nodes to table, the value of the pointer is used.
+ *      The pointer value is used as the seed for srand().
  */ 
 typedef struct dymat_obj
 {
-    node pointerlist_head;
+    node* table;    // size is defined by TABLE_SIZE
 };
 
 // define "dymat" as a pointer to dymat_obj
@@ -49,14 +55,19 @@ dymat main_dymat = NULL;
 //===========================================================//
 /* Function:    void init()
  * Parameters:  none
- * Description: initializes main_dymat
+ * Description: initializes main_dymat and table
+ *      also sets all nodes in table to NULL
  */
 void init()
 {
     if (main_dymat == NULL)
     {
         main_dymat = malloc(sizeof(struct dymat_obj));
-        main_dymat->pointerlist_head = NULL;
+        main_dymat->table = calloc(TABLE_SIZE, sizeof(struct node_obj));
+        for (int i = 0; i < TABLE_SIZE; i++)
+        {
+            main_dymat->table[i] = NULL;
+        }
     }
 }
 
@@ -82,21 +93,29 @@ node ctor_node(void* memptr, char* desc, size_t sz)
 
 /* Function:    void add_node()
  * Parameters:  node newnode
- * Description: Adds a node to dymat's list
+ * Description: Adds a node to dymat's table by using the memptr value (the actual number) to calculate
+ *      an index for the table. It adds the node to the front of the list (stack-like)
  */
 void add_node(node newnode)
 {
-    if (main_dymat->pointerlist_head == NULL)
+    unsigned long int index = (unsigned long int) *newnode->memptr;
+    if (main_dymat->table[index] == NULL)
     {
-        main_dymat->pointerlist_head = newnode;
+        main_dymat->table[index] = newnode;
     }
     else
     {
-        newnode->next = main_dymat->pointerlist_head;
-        main_dymat->pointerlist_head = newnode;
+        newnode->next = main_dymat->table[index];
+        main_dymat->table[index] = newnode;
     }
 }
 
+/* Function:    void remove_node()
+ * Parameters:  node newnode
+ * Description: Removes a node from dymat's table by using memptr value (the actual number) to calculate 
+ *      the index for the table. If the list (at the index) has size greater than 1, it will iterate
+ *      through the list, comparing memptr values until it finds the correct one.
+ */
 
 //===========================================================//
 //Public Methods
