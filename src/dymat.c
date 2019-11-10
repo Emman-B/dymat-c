@@ -174,6 +174,11 @@ void remove_node(node deletenode)
  *      differ but it will still return 1.
  */
 
+int node_equals(node nodeA, node nodeB)
+{
+    return *(nodeA->memptr) == *(nodeB->memptr);
+}
+
 //===========================================================//
 //Public Methods
 //===========================================================//
