@@ -1,7 +1,5 @@
 #include "dymat.h"
 
-#include <stdlib.h>     // srand
-
 
 #define TABLE_SIZE 499  // prime number
 //===========================================================//
@@ -94,7 +92,12 @@ node ctor_node(void* memptr, char* desc, size_t sz)
 /* Function:    void add_node()
  * Parameters:  node newnode
  * Description: Adds a node to dymat's table by using the memptr value (the actual number) to calculate
- *      an index for the table. It adds the node to the front of the list (stack-like)
+ *      an index for the table. It adds the node to the front of the list.
+ *      If the node is being added to list of size 1 or greater, it will iterate through
+ *      the list to see if there is another node with the same memptr, that is, 
+ *      the dereferenced newnode memptr is equal to another node's dereferenced memptr.
+ *      If found, the new node will replace the old one.
+ *      The replacement process will not free the memptr, only the node associated with it.
  */
 void add_node(node newnode)
 {
@@ -105,16 +108,70 @@ void add_node(node newnode)
     }
     else
     {
-        newnode->next = main_dymat->table[index];
-        main_dymat->table[index] = newnode;
+        // TODO: complete this (and optimize it)
+        // verify that the memptr doesn't already exist in the table; if so, replace it
+        // if the first node in the list of size 1 has the same memptr value as newnode
+        if (main_dymat->table[index]->next == NULL && *(main_dymat->table[index]->memptr) == *(newnode->memptr))
+        {
+            node toreplace = main_dymat->table[index];
+            main_dymat->table[index] = newnode;
+            free(toreplace);
+            toreplace = NULL;
+        }
+        // the list is not of size one
+        else
+        {
+            // if the first thing is what needs to be replaced...
+            if ( *(main_dymat->table[index]->memptr) == *(newnode->memptr))
+            {
+                node toreplace = main_dymat->table[index];
+                newnode->next = main_dymat->table[index]->next;
+                main_dymat->table[index] = newnode;
+                free(toreplace);
+                toreplace = NULL;
+            }
+            // otherwise start checking the rest of the list
+            else
+            {
+                node prev = main_dymat->table[index];
+                node current = prev->next;
+                while (current != NULL)
+                {
+                    // if the current node is what needs to be replaced
+                    if ( *(current->memptr) == *(newnode->memptr) )
+                    {
+                        newnode->next = current->next;
+                        prev->next = newnode;
+                        free(current);
+                        current = NULL;
+                        return;
+                    }
+                    prev = prev->next;
+                    current = current->next;
+                }
+            }
+        }
     }
 }
 
-/* Function:    void remove_node()
- * Parameters:  node newnode
+/* Function:    void delete_node()
+ * Parameters:  node deletenode
  * Description: Removes a node from dymat's table by using memptr value (the actual number) to calculate 
  *      the index for the table. If the list (at the index) has size greater than 1, it will iterate
  *      through the list, comparing memptr values until it finds the correct one.
+ */
+
+void remove_node(node deletenode)
+{
+    unsigned long int index = (unsigned long int) *deletenode->memptr;
+    // TODO: finish this
+}
+
+/* Function:    int node_equals()
+ * Parameters:  node nodeA, node nodeB
+ * Description: Returns 1 if *(nodeA->memptr) is equal to *(nodeB->memptr). In other words, returns 1
+ *      if two nodes happen to be pointing to the same memory. This means that the description can
+ *      differ but it will still return 1.
  */
 
 //===========================================================//
