@@ -1,7 +1,7 @@
 #include "dymat.h"
 
 
-#define TABLE_SIZE 499  // prime number
+const unsigned int TABLE_SIZE = 499;  // prime number
 //===========================================================//
 // Structs
 //===========================================================//
