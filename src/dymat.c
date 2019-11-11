@@ -16,7 +16,7 @@
  *      int status      - status of memory:
  *                          0 = in use, 1 = free
  */ 
-typedef struct node_obj
+struct node_obj
 {
     void** memptr;
     char* desc;
@@ -37,7 +37,7 @@ typedef struct node_obj* node;
  *  Extra Description: To add nodes to table, the value of the pointer is used.
  *      The pointer value is used as the seed for srand().
  */ 
-typedef struct dymat_obj
+struct dymat_obj
 {
     node* table;    // size is defined by TABLE_SIZE
 };
@@ -87,6 +87,18 @@ node ctor_node(void* memptr, char* desc, size_t sz)
     #endif
 
     return newnode;
+}
+
+/* Function:    int node_equals()
+ * Parameters:  node nodeA, node nodeB
+ * Description: Returns 1 if *(nodeA->memptr) is equal to *(nodeB->memptr). In other words, returns 1
+ *      if two nodes happen to be pointing to the same memory. This means that the description can
+ *      differ but it will still return 1.
+ */
+
+int node_equals(node nodeA, node nodeB)
+{
+    return *(nodeA->memptr) == *(nodeB->memptr);
 }
 
 /* Function:    void add_node()
@@ -158,18 +170,6 @@ void remove_node(node deletenode)
 {
     unsigned long int index = (unsigned long int) *deletenode->memptr;
     // TODO: finish this
-}
-
-/* Function:    int node_equals()
- * Parameters:  node nodeA, node nodeB
- * Description: Returns 1 if *(nodeA->memptr) is equal to *(nodeB->memptr). In other words, returns 1
- *      if two nodes happen to be pointing to the same memory. This means that the description can
- *      differ but it will still return 1.
- */
-
-int node_equals(node nodeA, node nodeB)
-{
-    return *(nodeA->memptr) == *(nodeB->memptr);
 }
 
 //===========================================================//
