@@ -18,4 +18,12 @@ void* td_calloc(char* desc, size_t number, size_t sz);
 
 int t_free(void* memptr);
 
+#ifdef  _ENABLE_DYMAT_DEBUGGING
+    #ifndef _DYMAT_H_DEBUG
+    #define _DYMAT_H_DEBUG
+
+
+    #endif
+#endif
+
 #endif
