@@ -102,54 +102,47 @@ node ctor_node(void* memptr, char* desc, size_t sz)
 void add_node(node newnode)
 {
     unsigned long int index = (unsigned long int) *newnode->memptr;
+    // Add case 1: The list is NULL at index
     if (main_dymat->table[index] == NULL)
     {
         main_dymat->table[index] = newnode;
     }
+    // Add case 2: The list is not empty
     else
     {
-        // TODO: complete this (and optimize it)
+        // TODO: optimize it
         // verify that the memptr doesn't already exist in the table; if so, replace it
         // if the first node in the list of size 1 has the same memptr value as newnode
-        if (main_dymat->table[index]->next == NULL && *(main_dymat->table[index]->memptr) == *(newnode->memptr))
+
+        // Add case 2a: the first node is what needs replacing
+        node prevnode = main_dymat->table[index];
+        if (node_equals(prevnode, newnode))
         {
-            node toreplace = main_dymat->table[index];
+            node toreplace = prevnode;
+            newnode->next = main_dymat->table[index]->next;
             main_dymat->table[index] = newnode;
             free(toreplace);
-            toreplace = NULL;
         }
-        // the list is not of size one
         else
         {
-            // if the first thing is what needs to be replaced...
-            if ( *(main_dymat->table[index]->memptr) == *(newnode->memptr))
+            // Add case 2b: the node that may need replacing is elsewhere
+            node current = prevnode->next;
+            while (current != NULL)
             {
-                node toreplace = main_dymat->table[index];
-                newnode->next = main_dymat->table[index]->next;
-                main_dymat->table[index] = newnode;
-                free(toreplace);
-                toreplace = NULL;
-            }
-            // otherwise start checking the rest of the list
-            else
-            {
-                node prev = main_dymat->table[index];
-                node current = prev->next;
-                while (current != NULL)
+                if (node_equals(current, newnode))
                 {
-                    // if the current node is what needs to be replaced
-                    if ( *(current->memptr) == *(newnode->memptr) )
-                    {
-                        newnode->next = current->next;
-                        prev->next = newnode;
-                        free(current);
-                        current = NULL;
-                        return;
-                    }
-                    prev = prev->next;
-                    current = current->next;
+                    node toreplace = current;
+                    newnode->next = current->next;
+                    prevnode->next = newnode;
+                    free(toreplace);
                 }
+                prevnode = prevnode->next;
+                current = current->next;
             }
+
+            //Add case 3: there is no node that needs replacing
+            newnode->next = main_dymat->table[index];
+            main_dymat->table[index] = newnode;
         }
     }
 }
