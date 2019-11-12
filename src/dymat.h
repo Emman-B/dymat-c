@@ -5,6 +5,7 @@
 
 // dynamic memory allocation tracker object
 typedef struct dymat_obj* dymat;
+typedef struct node_obj* node;      // identify node
 
 // malloc which stores pointer to queue and returns it
 // "Generic Pointer" is used as description if desc not defined
@@ -18,12 +19,12 @@ void* td_calloc(char* desc, size_t number, size_t sz);
 
 int t_free(void* memptr);
 
-#ifdef  _ENABLE_DYMAT_DEBUGGING
-    #ifndef _DYMAT_H_DEBUG
-    #define _DYMAT_H_DEBUG
-
-
-    #endif
+// functions for debugging table/node functions
+#if defined(_DYMAT_ENABLE_DEBUG)
+    void ctor_node(void* memptr, char* desc, size_t sz);
+    int node_equals(node nodeA, node nodeB);
+    void add_node(node newnode);
+    void remove_node(node deletenode);
 #endif
 
 #endif
