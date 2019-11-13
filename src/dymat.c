@@ -11,7 +11,7 @@ const unsigned int TABLE_SIZE = 499;  // prime number
  *      char* desc      - description of pointer
  *      node_obj* next  - linked list connection to next node
  *      
- *      _DYMAT_MEMRPT fields
+ *      DYMAT_MEMRPT fields
  *      int size        - size of the memory that is allocated
  *      int status      - status of memory:
  *                          0 = in use, 1 = free
@@ -22,7 +22,7 @@ struct node_obj
     char* desc;
     struct node_obj* next;
 
-    #ifdef _DYMAT_MEMRPT
+    #ifdef DYMAT_MEMRPT
     int size;
     int status;
     #endif
@@ -72,7 +72,7 @@ void init()
 /* Function:    node ctor_node()
  * Parameters:  void* memptr, char* desc, size_t sz
  * Description: constructor for node struct,
- *      also defines extra fields for _DYMAT_MEMRPT
+ *      also defines extra fields for DYMAT_MEMRPT
  */
 node ctor_node(void* memptr, char* desc, size_t sz)
 {
@@ -81,7 +81,7 @@ node ctor_node(void* memptr, char* desc, size_t sz)
     newnode->desc = desc;
     newnode->next = NULL;
 
-    #ifdef _DYMAT_MEMRPT
+    #ifdef DYMAT_MEMRPT
     newnode->size = sz;
     newnode->status = 0;
     #endif
@@ -122,7 +122,6 @@ void add_node(node newnode)
     // Add case 2: The list is not empty
     else
     {
-        // TODO: optimize it
         // verify that the memptr doesn't already exist in the table; if so, replace it
         // if the first node in the list of size 1 has the same memptr value as newnode
 
@@ -169,8 +168,39 @@ void add_node(node newnode)
 void remove_node(node deletenode)
 {
     unsigned long int index = (unsigned long int) *deletenode->memptr;
+    // Error 1: node at index does not exist
+    if (main_dymat->table[index] == NULL)
+    {
+        fprintf(stderr, "[ERROR] remove_node called on node not on list\n");
+    }
+    // if else statement is reached, list at index exists
+    else
+    {
+        node current = main_dymat->table[index];
+        if (node_equals(deletenode, current))
+        {
+            // TODO: implement delete action here
+        }
+        else
+        {
+            node previous = current;
+            current = current->next;
+            while (current != NULL)
+            {
+                if (node_equals(deletenode, current))
+                {
+                    // TODO: implement delete action here
+                }
+                previous = previous->next;
+                current = current->next;
+            }
+        }
+        
+    }
+    
     // TODO: finish this
 }
+
 
 //===========================================================//
 //Public Methods
@@ -204,3 +234,31 @@ void* t_malloc(size_t sz)
 {
     return td_malloc("Generic Pointer", sz);
 }
+
+
+
+//===========================================================//
+//Debug Methods (accessible if DYMAT_ENABLE_DEBUG is defined)
+//===========================================================//
+void** get_memptr (node n)
+{
+    return n->memptr;
+}
+char* get_desc (node n)
+{
+    return n->desc;
+}
+node get_next(node n)
+{
+    return n->next;
+}
+#ifdef DYMAT_MEMRPT
+    int get_size (node n)
+    {
+        return n->size;
+    }
+    int get_status (node n)
+    {
+        return n->status;
+    }
+#endif
