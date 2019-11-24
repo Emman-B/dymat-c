@@ -32,6 +32,7 @@ int t_free(void* memptr);
     #endif
 
     node ctor_node(void* memptr, char* desc, size_t sz);
+    void dtor_node(node nodetodestruct);
     int node_equals(node nodeA, node nodeB);
     void add_node(node newnode);
     void remove_node(node deletenode);

@@ -89,6 +89,26 @@ node ctor_node(void* memptr, char* desc, size_t sz)
     return newnode;
 }
 
+/* Function:    int dtor_node()
+ * Parameters:  node nodetodestruct
+ * Description: destroys node, frees memory associated with node
+ *      returns 1 if nodetodestruct is NULL (no destruction done), 0 otherwise
+ */
+int dtor_node(node nodetodestruct)
+{
+    if (nodetodestruct == NULL)
+    {
+        return 1;
+    }
+    else
+    {
+        free(nodetodestruct);
+        nodetodestruct = NULL;
+        return 0;
+    }
+    
+}
+
 /* Function:    int node_equals()
  * Parameters:  node nodeA, node nodeB
  * Description: Returns 1 if *(nodeA->memptr) is equal to *(nodeB->memptr). In other words, returns 1
