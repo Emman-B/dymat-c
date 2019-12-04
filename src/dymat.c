@@ -134,6 +134,7 @@ int node_equals(node nodeA, node nodeB)
 void add_node(node newnode)
 {
     unsigned long int index = (unsigned long int) *newnode->memptr;
+    index %= TABLE_SIZE;
     // Add case 1: The list is NULL at index
     if (main_dymat->table[index] == NULL)
     {
@@ -188,6 +189,7 @@ void add_node(node newnode)
 void remove_node(node deletenode)
 {
     unsigned long int index = (unsigned long int) *deletenode->memptr;
+    index %= TABLE_SIZE;
     // Error 1: node at index does not exist
     if (main_dymat->table[index] == NULL)
     {
@@ -199,7 +201,8 @@ void remove_node(node deletenode)
         node current = main_dymat->table[index];
         if (node_equals(deletenode, current))
         {
-            // TODO: implement delete action here
+            main_dymat->table[index] = current->next;
+            dtor_node(current);
         }
         else
         {
@@ -209,7 +212,8 @@ void remove_node(node deletenode)
             {
                 if (node_equals(deletenode, current))
                 {
-                    // TODO: implement delete action here
+                    previous->next = current->next;
+                    dtor_node(current);
                 }
                 previous = previous->next;
                 current = current->next;
