@@ -258,6 +258,36 @@ void* t_malloc(size_t sz)
     return td_malloc("Generic Pointer", sz);
 }
 
+/* Function:    void* td_calloc()
+ * Parameters:  char* desc, size_t number, size_t sz
+ * Description: allocates memory with calloc to newmemory, and
+ *      pointer to newmemory is stored into a node which is
+ *      stored onto dymat's linked list
+ *      This also takes in a description for the pointer.
+ */
+void* td_calloc(char* desc, size_t number, size_t sz)
+{
+    init();
+    // create node for newmemory
+    void* newmemory = calloc(number, sz);
+    node newnode = ctor_node(newmemory, desc, number * sz);
+
+    // store node into dymat list
+    add_node(newnode);
+    
+    return newmemory;
+}
+
+/* Function:    void* t_calloc()
+ * Parameters:  size_t number, size_t sz
+ * Description: functions similarly to td_calloc(char*, size_t, size_t)
+ *      except "Generic Pointer" is used as a description
+ */
+void* t_calloc(size_t number, size_t sz)
+{
+    return td_calloc("Generic Pointer", number, sz);
+}
+
 
 
 //===========================================================//
