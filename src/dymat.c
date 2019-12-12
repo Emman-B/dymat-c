@@ -214,6 +214,7 @@ void remove_node(node deletenode)
                 {
                     previous->next = current->next;
                     dtor_node(current);
+                    break;
                 }
                 previous = previous->next;
                 current = current->next;
@@ -221,8 +222,6 @@ void remove_node(node deletenode)
         }
         
     }
-    
-    // TODO: finish this
 }
 
 
