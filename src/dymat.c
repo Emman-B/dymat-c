@@ -221,20 +221,13 @@ void remove_node(node deletenode)
         }
     }
 }
-
 /* Function:    void freeall()
  * Parameters:  none
  * Description: When called, all nodes in main_dymat is freed.
- *      This should be called on exit of the function.
+ *      This does not free main_dymat or its table.
  */
-
 void freeall()
 {
-    if (main_dymat == NULL)
-    {
-        return;
-    }
-
     for (int i = 0; i < TABLE_SIZE; i++)
     {
         while (main_dymat->table[i] != NULL)
@@ -242,6 +235,22 @@ void freeall()
             remove_node(main_dymat->table[i]);
         }
     }
+}
+
+/* Function:    void destroy_dymatobj()
+ * Parameters:  none
+ * Description: When called, all nodes in main_dymat is freed and
+ *      the main_dymat and main_dymat->table are freed. This should
+ *      be called on exit of the program.
+ */
+void destroy_dymatobj()
+{
+    if (main_dymat == NULL)
+    {
+        return;
+    }
+    freeall();
+
     free(main_dymat->table);
     main_dymat->table = NULL;
 

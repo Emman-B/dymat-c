@@ -18,9 +18,13 @@ void* td_malloc(char* desc, size_t sz);
 void* t_calloc(size_t number, size_t sz);
 void* td_calloc(char* desc, size_t number, size_t sz);
 
+// frees a specific pointer
 int t_free(void* memptr);
 
+// frees all allocated memory (except for main_dymat)
 void freeall();
+// frees everything (including main_dymat)
+void destroy_dymatobj();
 
 // functions for debugging table/node functions
 #ifdef DYMAT_ENABLE_DEBUG
