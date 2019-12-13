@@ -20,6 +20,8 @@ void* td_calloc(char* desc, size_t number, size_t sz);
 
 int t_free(void* memptr);
 
+void freeall();
+
 // functions for debugging table/node functions
 #ifdef DYMAT_ENABLE_DEBUG
     // node access functions

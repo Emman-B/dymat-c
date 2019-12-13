@@ -18,7 +18,7 @@ const unsigned int TABLE_SIZE = 499;  // prime number
  */ 
 struct node_obj
 {
-    void** memptr;
+    void* memptr;
     char* desc;
     struct node_obj* next;
 
@@ -54,18 +54,13 @@ dymat main_dymat = NULL;
 /* Function:    void init()
  * Parameters:  none
  * Description: initializes main_dymat and table
- *      also sets all nodes in table to NULL
  */
 void init()
 {
     if (main_dymat == NULL)
     {
-        main_dymat = malloc(sizeof(struct dymat_obj));
+        main_dymat = calloc(1, sizeof(struct dymat_obj));
         main_dymat->table = calloc(TABLE_SIZE, sizeof(struct node_obj));
-        for (int i = 0; i < TABLE_SIZE; i++)
-        {
-            main_dymat->table[i] = NULL;
-        }
     }
 }
 
@@ -76,8 +71,8 @@ void init()
  */
 node ctor_node(void* memptr, char* desc, size_t sz)
 {
-    node newnode = malloc(sizeof(struct node_obj));
-    newnode->memptr = &memptr;
+    node newnode = calloc(1, sizeof(struct node_obj));
+    newnode->memptr = memptr;
     newnode->desc = desc;
     newnode->next = NULL;
 
@@ -102,6 +97,11 @@ int dtor_node(node nodetodestruct)
     }
     else
     {
+        if (nodetodestruct->memptr != NULL)
+        {
+            free(nodetodestruct->memptr);
+            nodetodestruct->memptr = NULL;
+        }
         free(nodetodestruct);
         nodetodestruct = NULL;
         return 0;
@@ -118,7 +118,7 @@ int dtor_node(node nodetodestruct)
 
 int node_equals(node nodeA, node nodeB)
 {
-    return *(nodeA->memptr) == *(nodeB->memptr);
+    return nodeA->memptr == nodeB->memptr;
 }
 
 /* Function:    void add_node()
@@ -133,7 +133,7 @@ int node_equals(node nodeA, node nodeB)
  */
 void add_node(node newnode)
 {
-    unsigned long int index = (unsigned long int) *newnode->memptr;
+    unsigned long int index = (unsigned long int) newnode->memptr;
     index %= TABLE_SIZE;
     // Add case 1: The list is NULL at index
     if (main_dymat->table[index] == NULL)
@@ -185,10 +185,9 @@ void add_node(node newnode)
  *      the index for the table. If the list (at the index) has size greater than 1, it will iterate
  *      through the list, comparing memptr values until it finds the correct one.
  */
-
 void remove_node(node deletenode)
 {
-    unsigned long int index = (unsigned long int) *deletenode->memptr;
+    unsigned long int index = (unsigned long int) deletenode->memptr;
     index %= TABLE_SIZE;
     // Error 1: node at index does not exist
     if (main_dymat->table[index] == NULL)
@@ -220,10 +219,35 @@ void remove_node(node deletenode)
                 current = current->next;
             }
         }
-        
     }
 }
 
+/* Function:    void freeall()
+ * Parameters:  none
+ * Description: When called, all nodes in main_dymat is freed.
+ *      This should be called on exit of the function.
+ */
+
+void freeall()
+{
+    if (main_dymat == NULL)
+    {
+        return;
+    }
+
+    for (int i = 0; i < TABLE_SIZE; i++)
+    {
+        while (main_dymat->table[i] != NULL)
+        {
+            remove_node(main_dymat->table[i]);
+        }
+    }
+    free(main_dymat->table);
+    main_dymat->table = NULL;
+
+    free(main_dymat);
+    main_dymat = NULL;
+}
 
 //===========================================================//
 //Public Methods
