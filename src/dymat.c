@@ -258,6 +258,27 @@ void destroy_dymatobj()
     main_dymat = NULL;
 }
 
+/* Function:    int is_null()
+ * Parameters:  void* memptr
+ * Description: Checks memptr if it exists in the table. If it does
+ *      exist, it returns 1; else it returns 0.
+ */
+int is_null(void* memptr)
+{
+    unsigned long int index = (unsigned long int) memptr;
+    index %= TABLE_SIZE;
+
+    node current = main_dymat->table[index];
+    while (current != NULL)
+    {
+        if (current->memptr == memptr)
+        {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
 //===========================================================//
 //Public Methods
 //===========================================================//

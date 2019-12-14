@@ -26,6 +26,9 @@ void freeall();
 // frees everything (including main_dymat)
 void destroy_dymatobj();
 
+// verifies if a pointer is not null (by searching through table using pointer)
+int is_null(void* memptr);
+
 // functions for debugging table/node functions
 #ifdef DYMAT_ENABLE_DEBUG
     // node access functions
