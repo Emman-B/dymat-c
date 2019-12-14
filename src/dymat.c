@@ -121,6 +121,15 @@ int node_equals(node nodeA, node nodeB)
     return nodeA->memptr == nodeB->memptr;
 }
 
+/* Function:    unsigned long int make_index()
+ * Parameters:  void* memptr
+ * Description: Turns memptr into an index restricted to TABLE_SIZE.
+ */
+unsigned long int make_index(void* memptr)
+{
+    return ((unsigned long int) memptr) % TABLE_SIZE;
+}
+
 /* Function:    void add_node()
  * Parameters:  node newnode
  * Description: Adds a node to dymat's table by using the memptr value (the actual number) to calculate
@@ -133,8 +142,8 @@ int node_equals(node nodeA, node nodeB)
  */
 void add_node(node newnode)
 {
-    unsigned long int index = (unsigned long int) newnode->memptr;
-    index %= TABLE_SIZE;
+    unsigned long int index = make_index(newnode->memptr);
+
     // Add case 1: The list is NULL at index
     if (main_dymat->table[index] == NULL)
     {
@@ -187,8 +196,7 @@ void add_node(node newnode)
  */
 void remove_node(node deletenode)
 {
-    unsigned long int index = (unsigned long int) deletenode->memptr;
-    index %= TABLE_SIZE;
+    unsigned long int index = make_index(deletenode->memptr);
     // Error 1: node at index does not exist
     if (main_dymat->table[index] == NULL)
     {
@@ -221,64 +229,27 @@ void remove_node(node deletenode)
         }
     }
 }
-/* Function:    void freeall()
- * Parameters:  none
- * Description: When called, all nodes in main_dymat is freed.
- *      This does not free main_dymat or its table.
- */
-void freeall()
-{
-    for (int i = 0; i < TABLE_SIZE; i++)
-    {
-        while (main_dymat->table[i] != NULL)
-        {
-            remove_node(main_dymat->table[i]);
-        }
-    }
-}
 
-/* Function:    void destroy_dymatobj()
- * Parameters:  none
- * Description: When called, all nodes in main_dymat is freed and
- *      the main_dymat and main_dymat->table are freed. This should
- *      be called on exit of the program.
- */
-void destroy_dymatobj()
-{
-    if (main_dymat == NULL)
-    {
-        return;
-    }
-    freeall();
-
-    free(main_dymat->table);
-    main_dymat->table = NULL;
-
-    free(main_dymat);
-    main_dymat = NULL;
-}
-
-/* Function:    int is_null()
+/* Function:    node find_in_table()
  * Parameters:  void* memptr
- * Description: Checks memptr if it exists in the table. If it does
- *      exist, it returns 1; else it returns 0.
+ * Description: Returns a node that is currently in the table using memptr
+ *      as a lookup value. Returns NULL if no such memptr exists.
  */
-int is_null(void* memptr)
+node find_in_table(void* memptr)
 {
-    unsigned long int index = (unsigned long int) memptr;
-    index %= TABLE_SIZE;
-
+    unsigned long int index = make_index(memptr);
     node current = main_dymat->table[index];
     while (current != NULL)
     {
         if (current->memptr == memptr)
         {
-            return 1;
+            return current;
         }
         current = current->next;
     }
-    return 0;
+    return NULL;
 }
+
 //===========================================================//
 //Public Methods
 //===========================================================//
@@ -342,30 +313,58 @@ void* t_calloc(size_t number, size_t sz)
     return td_calloc("Generic Pointer", number, sz);
 }
 
+int t_free(void* memptr)
+{
+    // TODO: implement this
+}
 
+/* Function:    void freeall()
+ * Parameters:  none
+ * Description: When called, all nodes in main_dymat is freed.
+ *      This does not free main_dymat or its table.
+ */
+void freeall()
+{
+    for (int i = 0; i < TABLE_SIZE; i++)
+    {
+        while (main_dymat->table[i] != NULL)
+        {
+            remove_node(main_dymat->table[i]);
+        }
+    }
+}
 
-//===========================================================//
-//Debug Methods (accessible if DYMAT_ENABLE_DEBUG is defined)
-//===========================================================//
-void** get_memptr (node n)
+/* Function:    void destroy_dymatobj()
+ * Parameters:  none
+ * Description: When called, all nodes in main_dymat is freed and
+ *      the main_dymat and main_dymat->table are freed. This should
+ *      be called on exit of the program.
+ */
+void destroy_dymatobj()
 {
-    return n->memptr;
-}
-char* get_desc (node n)
-{
-    return n->desc;
-}
-node get_next(node n)
-{
-    return n->next;
-}
-#ifdef DYMAT_MEMRPT
-    int get_size (node n)
+    if (main_dymat == NULL)
     {
-        return n->size;
+        return;
     }
-    int get_status (node n)
+    freeall();
+
+    free(main_dymat->table);
+    main_dymat->table = NULL;
+
+    free(main_dymat);
+    main_dymat = NULL;
+}
+
+/* Function:    int is_null()
+ * Parameters:  void* memptr
+ * Description: Checks memptr if it exists in the table. If it does
+ *      exist, it returns 1; else it returns 0.
+ */
+int is_null(void* memptr)
+{
+    if (find_in_table(memptr) != NULL)
     {
-        return n->status;
+        return 1;
     }
-#endif
+    return 0;
+}
