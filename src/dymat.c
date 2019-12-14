@@ -278,6 +278,10 @@ void* t_calloc(size_t number, size_t sz)
  */
 int t_free(void* memptr)
 {
+    if (main_dymat == NULL)
+    {
+        return 1;
+    }
     node tofree = find_in_table(memptr);
     if (tofree != NULL)
     {
@@ -298,6 +302,10 @@ int t_free(void* memptr)
  */
 void freeall()
 {
+    if (main_dymat == NULL)
+    {
+        return;
+    }
     for (int i = 0; i < TABLE_SIZE; i++)
     {
         while (main_dymat->table[i] != NULL)
@@ -335,6 +343,10 @@ void destroy_dymatobj()
  */
 int is_null(void* memptr)
 {
+    if (main_dymat == NULL)
+    {
+        return 0;
+    }
     if (find_in_table(memptr) != NULL)
     {
         return 1;
