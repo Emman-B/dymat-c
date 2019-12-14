@@ -10,22 +10,12 @@ const unsigned int TABLE_SIZE = 499;  // prime number
  *      void** memptr   - pointer to memory pointer
  *      char* desc      - description of pointer
  *      node_obj* next  - linked list connection to next node
- *      
- *      DYMAT_MEMRPT fields
- *      int size        - size of the memory that is allocated
- *      int status      - status of memory:
- *                          0 = in use, 1 = free
  */ 
 struct node_obj
 {
     void* memptr;
     char* desc;
     struct node_obj* next;
-
-    #ifdef DYMAT_MEMRPT
-    int size;
-    int status;
-    #endif
 };
 
 // define "node" as a pointer to node_obj
@@ -66,8 +56,7 @@ void init()
 
 /* Function:    node ctor_node()
  * Parameters:  void* memptr, char* desc, size_t sz
- * Description: constructor for node struct,
- *      also defines extra fields for DYMAT_MEMRPT
+ * Description: constructor for node struct.
  */
 node ctor_node(void* memptr, char* desc, size_t sz)
 {
@@ -75,11 +64,6 @@ node ctor_node(void* memptr, char* desc, size_t sz)
     newnode->memptr = memptr;
     newnode->desc = desc;
     newnode->next = NULL;
-
-    #ifdef DYMAT_MEMRPT
-    newnode->size = sz;
-    newnode->status = 0;
-    #endif
 
     return newnode;
 }
