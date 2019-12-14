@@ -9,14 +9,10 @@ typedef struct dymat_obj* dymat;
 typedef struct node_obj* node;      // primarily for debugging, not intended to be accessed
 
 // malloc which stores pointer to queue and returns it
-// "Generic Pointer" is used as description if desc not defined
 void* t_malloc(size_t sz);
-void* td_malloc(char* desc, size_t sz);
 
 // calloc which stores pointer to queue and returns it
-// "Generic Pointer" is used as description if desc not defined
 void* t_calloc(size_t number, size_t sz);
-void* td_calloc(char* desc, size_t number, size_t sz);
 
 // frees a specific pointer
 int t_free(void* memptr);

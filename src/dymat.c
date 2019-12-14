@@ -8,13 +8,11 @@ const unsigned int TABLE_SIZE = 499;  // prime number
 /** Struct: node_obj
  *  Fields: 
  *      void** memptr   - pointer to memory pointer
- *      char* desc      - description of pointer
  *      node_obj* next  - linked list connection to next node
  */ 
 struct node_obj
 {
     void* memptr;
-    char* desc;
     struct node_obj* next;
 };
 
@@ -55,14 +53,13 @@ void init()
 }
 
 /* Function:    node ctor_node()
- * Parameters:  void* memptr, char* desc, size_t sz
+ * Parameters:  void* memptr, size_t sz
  * Description: constructor for node struct.
  */
-node ctor_node(void* memptr, char* desc, size_t sz)
+node ctor_node(void* memptr, size_t sz)
 {
     node newnode = calloc(1, sizeof(struct node_obj));
     newnode->memptr = memptr;
-    newnode->desc = desc;
     newnode->next = NULL;
 
     return newnode;
@@ -96,8 +93,7 @@ int dtor_node(node nodetodestruct)
 /* Function:    int node_equals()
  * Parameters:  node nodeA, node nodeB
  * Description: Returns 1 if *(nodeA->memptr) is equal to *(nodeB->memptr). In other words, returns 1
- *      if two nodes happen to be pointing to the same memory. This means that the description can
- *      differ but it will still return 1.
+ *      if two nodes happen to be pointing to the same memory.
  */
 
 int node_equals(node nodeA, node nodeB)
@@ -237,49 +233,18 @@ node find_in_table(void* memptr)
 //===========================================================//
 //Public Methods
 //===========================================================//
-/* Function:    void* td_malloc()
- * Parameters:  char* desc, size_t sz
+/* Function:    void* t_malloc()
+ * Parameters:  size_t sz
  * Description: allocates memory with malloc to newmemory, and
  *      pointer to newmemory is stored into a node which is
  *      stored onto dymat's linked list
- *      This also takes in a description for the pointer.
  */
-void* td_malloc(char* desc, size_t sz)
+void* t_malloc(size_t sz)
 {
     init();
     // create node for newmemory
     void* newmemory = malloc(sz);
-    node newnode = ctor_node(newmemory, desc, sz);
-
-    // store node into dymat list
-    add_node(newnode);
-    
-    return newmemory;
-}
-
-/* Function:    void* t_malloc()
- * Parameters:  size_t sz
- * Description: functions similarly to td_malloc(char*, size_t)
- *      except "Generic Pointer" is used as a description
- */
-void* t_malloc(size_t sz)
-{
-    return td_malloc("Generic Pointer", sz);
-}
-
-/* Function:    void* td_calloc()
- * Parameters:  char* desc, size_t number, size_t sz
- * Description: allocates memory with calloc to newmemory, and
- *      pointer to newmemory is stored into a node which is
- *      stored onto dymat's linked list
- *      This also takes in a description for the pointer.
- */
-void* td_calloc(char* desc, size_t number, size_t sz)
-{
-    init();
-    // create node for newmemory
-    void* newmemory = calloc(number, sz);
-    node newnode = ctor_node(newmemory, desc, number * sz);
+    node newnode = ctor_node(newmemory, sz);
 
     // store node into dymat list
     add_node(newnode);
@@ -289,12 +254,21 @@ void* td_calloc(char* desc, size_t number, size_t sz)
 
 /* Function:    void* t_calloc()
  * Parameters:  size_t number, size_t sz
- * Description: functions similarly to td_calloc(char*, size_t, size_t)
- *      except "Generic Pointer" is used as a description
+ * Description: allocates memory with calloc to newmemory, and
+ *      pointer to newmemory is stored into a node which is
+ *      stored onto dymat's linked list
  */
 void* t_calloc(size_t number, size_t sz)
 {
-    return td_calloc("Generic Pointer", number, sz);
+    init();
+    // create node for newmemory
+    void* newmemory = calloc(number, sz);
+    node newnode = ctor_node(newmemory, number * sz);
+
+    // store node into dymat list
+    add_node(newnode);
+    
+    return newmemory;
 }
 
 /* Function:    int t_free()
