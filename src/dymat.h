@@ -29,22 +29,4 @@ void destroy_dymatobj();
 // verifies if a pointer is not null (by searching through table using pointer)
 int is_null(void* memptr);
 
-// functions for debugging table/node functions
-#ifdef DYMAT_ENABLE_DEBUG
-    // node access functions
-    void** get_memptr (node n);
-    char* get_desc (node n);
-    node get_next(node n);
-    #ifdef DYMAT_MEMRPT
-    int get_size (node n);
-    int get_status (node n);
-    #endif
-
-    node ctor_node(void* memptr, char* desc, size_t sz);
-    void dtor_node(node nodetodestruct);
-    int node_equals(node nodeA, node nodeB);
-    void add_node(node newnode);
-    void remove_node(node deletenode);
-#endif
-
 #endif
