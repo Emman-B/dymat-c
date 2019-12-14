@@ -313,9 +313,24 @@ void* t_calloc(size_t number, size_t sz)
     return td_calloc("Generic Pointer", number, sz);
 }
 
+/* Function:    int t_free()
+ * Parameters:  void* memptr
+ * Description: Frees memory at a given memptr. Returns 0 if free is done,
+ *      1 if free is not done.
+ */
 int t_free(void* memptr)
 {
-    // TODO: implement this
+    node tofree = find_in_table(memptr);
+    if (tofree != NULL)
+    {
+        remove_node(tofree);
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+    
 }
 
 /* Function:    void freeall()
