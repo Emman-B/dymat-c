@@ -1,3 +1,4 @@
+// Written by Emmanuel Butor
 #include "dymat.h"
 
 

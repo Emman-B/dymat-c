@@ -1,3 +1,4 @@
+// Written by Emmanuel Butor
 // TEST_PUBLIC1.c
 // Tests all of the public methods defined in dymat.h
 

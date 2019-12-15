@@ -1,3 +1,4 @@
+// Written by Emmanuel Butor
 #ifndef DYMAT_H
 #define DYMAT_H
 
