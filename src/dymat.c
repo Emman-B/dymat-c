@@ -339,18 +339,18 @@ void destroy_dymatobj()
 
 /* Function:    int is_null()
  * Parameters:  void* memptr
- * Description: Checks memptr if it exists in the table. If it does
- *      exist, it returns 1; else it returns 0.
+ * Description: Checks memptr if it doesn't exist in the table. If it does
+ *      exist, it returns 0 (it's not null); else it returns 1.
  */
 int is_null(void* memptr)
 {
     if (main_dymat == NULL)
     {
-        return 0;
+        return 1;
     }
     if (find_in_table(memptr) != NULL)
     {
-        return 1;
+        return 0;
     }
-    return 0;
+    return 1;
 }
